@@ -10,7 +10,6 @@ import { useDbProducts } from "@/hooks/useDbProducts";
 import { ProductCardSkeletonGrid } from "@/components/skeletons/ProductCardSkeleton";
 import heroBg from "@/assets/hero-bg.jpg";
 import ctaBg from "@/assets/cta-bg.jpg";
-import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 
 export default function Index() {
   const { t } = useI18n();
@@ -59,8 +58,16 @@ export default function Index() {
       {/* Hero */}
       <section className="relative overflow-hidden min-h-[90vh] flex items-center">
         <div className="absolute inset-0">
-          <video autoPlay muted loop playsInline className="h-full w-full object-cover" style={{ opacity: 0.8 }}>
-            <source src={heroVideoAsset.url} type="video/mp4" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster={heroBg}
+            className="h-full w-full object-cover"
+            style={{ opacity: 0.8 }}
+          >
+            <source src="/hero-video.mp4" type="video/mp4" />
           </video>
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
