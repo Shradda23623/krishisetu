@@ -1,0 +1,305 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root, .dark {
+    --background: 30 15% 6%;
+    --foreground: 40 20% 95%;
+
+    --card: 30 12% 10%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 30 12% 10%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 28 100% 55%;
+    --primary-foreground: 30 15% 6%;
+
+    --secondary: 45 95% 58%;
+    --secondary-foreground: 30 15% 6%;
+
+    --muted: 30 10% 16%;
+    --muted-foreground: 35 12% 55%;
+
+    --accent: 28 40% 16%;
+    --accent-foreground: 28 100% 70%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 10% 18%;
+    --input: 30 10% 18%;
+    --ring: 28 100% 55%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 30 12% 8%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 28 100% 55%;
+    --sidebar-primary-foreground: 30 15% 6%;
+    --sidebar-accent: 28 40% 16%;
+    --sidebar-accent-foreground: 28 100% 70%;
+    --sidebar-border: 30 10% 18%;
+    --sidebar-ring: 28 100% 55%;
+
+    /* Custom tokens */
+    --kisan-earth: 25 45% 30%;
+    --kisan-earth-light: 35 35% 18%;
+    --kisan-terracotta: 16 70% 55%;
+    --kisan-clay: 20 40% 58%;
+    --kisan-leaf: 145 60% 40%;
+    --kisan-leaf-light: 145 40% 18%;
+    --kisan-sun: 42 95% 58%;
+    --kisan-sun-light: 42 70% 18%;
+    --kisan-sky: 200 60% 55%;
+    --kisan-wheat: 45 50% 65%;
+    --kisan-cream: 40 45% 20%;
+    --kisan-saffron: 28 100% 55%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(28 100% 55%), hsl(45 95% 58%), hsl(16 70% 55%));
+    --gradient-glass: linear-gradient(135deg, hsl(30 12% 14% / 0.6), hsl(30 12% 10% / 0.4));
+    --gradient-glow: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(28 100% 55% / 0.06), transparent 40%);
+    --gradient-card: linear-gradient(145deg, hsl(30 12% 13%), hsl(30 12% 9%));
+    --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 20px 60px -12px hsl(0 0% 0% / 0.5);
+    --shadow-warm: 0 8px 32px -8px hsl(28 100% 55% / 0.2);
+    --shadow-glow: 0 0 40px -10px hsl(28 100% 55% / 0.3);
+
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 20 25% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 25% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 25% 10%;
+
+    --primary: 24 90% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 42 80% 45%;
+    --secondary-foreground: 20 25% 10%;
+
+    --muted: 30 10% 92%;
+    --muted-foreground: 20 10% 40%;
+
+    --accent: 30 15% 94%;
+    --accent-foreground: 24 75% 32%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 25 8% 82%;
+    --input: 25 8% 85%;
+    --ring: 24 90% 42%;
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 20 20% 12%;
+    --sidebar-primary: 24 90% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 30 12% 92%;
+    --sidebar-accent-foreground: 24 75% 32%;
+    --sidebar-border: 25 8% 82%;
+    --sidebar-ring: 24 90% 42%;
+
+    --kisan-earth: 25 50% 28%;
+    --kisan-earth-light: 30 20% 90%;
+    --kisan-terracotta: 14 70% 40%;
+    --kisan-clay: 18 45% 40%;
+    --kisan-leaf: 145 60% 28%;
+    --kisan-leaf-light: 145 20% 92%;
+    --kisan-sun: 42 85% 42%;
+    --kisan-sun-light: 42 40% 92%;
+    --kisan-sky: 200 60% 40%;
+    --kisan-wheat: 42 50% 42%;
+    --kisan-cream: 35 30% 94%;
+    --kisan-saffron: 24 90% 42%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(24 90% 42%), hsl(42 80% 45%), hsl(14 70% 40%));
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.9), hsl(30 15% 98% / 0.8));
+    --gradient-glow: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(24 90% 42% / 0.06), transparent 40%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(30 10% 97%));
+    --shadow-card: 0 4px 24px -4px hsl(20 20% 15% / 0.08);
+    --shadow-elevated: 0 20px 60px -12px hsl(20 20% 15% / 0.12);
+    --shadow-warm: 0 8px 32px -8px hsl(24 90% 42% / 0.18);
+    --shadow-glow: 0 0 40px -10px hsl(24 90% 42% / 0.2);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  @media (max-width: 767px) {
+    body {
+      padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    }
+  }
+  /* Stronger keyboard focus for accessibility */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+  video {
+    filter: saturate(1.2) contrast(1.05);
+  }
+  .dark video {
+    filter: brightness(0.9) saturate(1.2);
+  }
+}
+
+@layer utilities {
+  .text-gradient-hero {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(42 95% 58%), hsl(28 100% 55%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-card {
+    background: var(--gradient-card);
+    border: 1px solid hsl(var(--border) / 0.4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-glow);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+
+  .glass-card:hover::before {
+    opacity: 1;
+  }
+
+  .glow-border {
+    position: relative;
+  }
+
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.3), transparent 50%, hsl(var(--secondary) / 0.3));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .glow-border:hover::after {
+    opacity: 1;
+  }
+
+  .bg-pattern-dots {
+    background-image: radial-gradient(hsl(var(--primary) / 0.07) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .bg-pattern-grid {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 6s ease-in-out 2s infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s linear infinite;
+    background-size: 200% 100%;
+  }
+
+  .animate-grain {
+    animation: grain 0.5s steps(10) infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(-5px) rotate(-1deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px -5px hsl(28 100% 55% / 0.2); }
+  50% { box-shadow: 0 0 40px -5px hsl(28 100% 55% / 0.4); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -2%); }
+  30% { transform: translate(2%, -1%); }
+  50% { transform: translate(-1%, 2%); }
+  70% { transform: translate(1%, 1%); }
+  90% { transform: translate(2%, -2%); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
