@@ -177,32 +177,69 @@ Open **http://localhost:8080** in your browser.
 
 ## Project Structure
 
+This is a full-stack project organised into a clear **Frontend** (React SPA) and **Backend** (Supabase Postgres + Edge Functions) split.
+
+### Frontend — React + Vite SPA
+
+Everything the browser runs. Lives at the repo root because Vite expects `package.json` and `index.html` at the top level for the build.
+
 ```
-krishisetu/
-├── public/                      # Static assets (logo, favicon)
-├── src/
-│   ├── assets/                  # Category images & hero backgrounds
-│   ├── components/
-│   │   ├── ui/                  # shadcn/ui primitives (Button, Card, Dialog...)
-│   │   ├── skeletons/           # Loading skeleton components
-│   │   └── *.tsx                # Feature components (Navbar, ProductCard, Map...)
-│   ├── context/                 # React Context providers
-│   │   ├── AuthContext.tsx      #   Session + role management
-│   │   ├── CartContext.tsx      #   Persistent shopping cart
-│   │   ├── I18nContext.tsx      #   Language switching
-│   │   └── ThemeContext.tsx     #   Dark / light mode
-│   ├── hooks/                   # Custom hooks (useDbProducts, useOrders...)
-│   ├── integrations/
-│   │   └── supabase/            # Supabase client + auto-generated DB types
-│   ├── lib/                     # Utilities (stripe, productUtils, cn)
-│   ├── pages/                   # Route components (16 pages)
-│   ├── App.tsx                  # Router + providers
-│   └── main.tsx                 # Entry point (wrapped in ErrorBoundary)
-├── supabase/
-│   ├── migrations/              # SQL schema migrations
-│   └── functions/               # Deno edge functions
-├── .github/workflows/ci.yml     # GitHub Actions CI
-└── tests/e2e/                   # Playwright E2E tests
+├── index.html                   # Vite entry HTML
+├── package.json                 # Frontend dependencies (React, Vite, Tailwind, shadcn/ui...)
+├── vite.config.ts               # Vite build + dev-server config
+├── tailwind.config.ts           # Tailwind theme (colors, fonts, shadcn tokens)
+├── tsconfig.json                # TypeScript config
+├── eslint.config.js             # ESLint rules
+├── components.json              # shadcn/ui config
+├── public/                      # Static assets (logo, favicon, hero video)
+└── src/
+    ├── assets/                  # Category images & hero backgrounds
+    ├── components/
+    │   ├── ui/                  # shadcn/ui primitives (Button, Card, Dialog...)
+    │   ├── skeletons/           # Loading skeleton components
+    │   └── *.tsx                # Feature components (Navbar, ProductCard, Map...)
+    ├── context/                 # React Context providers
+    │   ├── AuthContext.tsx      #   Session + role management
+    │   ├── CartContext.tsx      #   Persistent shopping cart
+    │   ├── I18nContext.tsx      #   Language switching
+    │   └── ThemeContext.tsx     #   Dark / light mode
+    ├── hooks/                   # Custom hooks (useDbProducts, useOrders...)
+    ├── integrations/
+    │   └── supabase/            # Typed Supabase client + auto-generated DB types
+    ├── lib/                     # Utilities (stripe, productUtils, cn)
+    ├── pages/                   # Route components (16 pages)
+    ├── App.tsx                  # Router + providers
+    └── main.tsx                 # Entry point (wrapped in ErrorBoundary)
+```
+
+### Backend — Supabase (Postgres + Auth + Edge Functions + Storage)
+
+All server-side code, database schema, and business logic. Deployed to Supabase (Postgres + Deno runtime) — no Express server required.
+
+```
+└── supabase/
+    ├── config.toml              # Supabase project config (function JWT settings, etc.)
+    ├── migrations/              # Versioned SQL schema migrations
+    │   ├── *_core_schema.sql    #   Tables, enums, indexes
+    │   ├── *_rls_policies.sql   #   Row-Level Security policies (per role)
+    │   ├── *_functions.sql      #   PL/pgSQL functions + triggers (stock, auto-profile)
+    │   └── *_storage.sql        #   Storage buckets + object policies
+    ├── functions/               # Deno serverless edge functions
+    │   ├── create-checkout/     #   Creates a Stripe embedded checkout session
+    │   ├── payments-webhook/    #   Flips orders to "confirmed" on Stripe success
+    │   ├── get-maps-key/        #   Returns the scoped Google Maps API key
+    │   └── _shared/             #   Shared Stripe client utilities
+    └── seed-demo-data.sql       # Demo products + farmer locations for screenshots
+```
+
+### Infrastructure & CI
+
+```
+├── .github/workflows/ci.yml     # GitHub Actions — lint + tests + build on every push
+├── tests/e2e/                   # Playwright end-to-end tests
+├── playwright-fixture.ts        # Shared Playwright test setup
+├── vitest.config.ts             # Vitest config (jsdom environment)
+└── .env.example                 # Template of required environment variables
 ```
 
 ---
