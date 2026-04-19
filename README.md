@@ -14,7 +14,9 @@
 ![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3-38B2AC?logo=tailwind-css&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-[Live Demo](#) · [Android APK](#) · [Video Walkthrough](#) · [Report Bug](https://github.com/Shradda23623/krishisetu/issues)
+### [**🚀 Live Demo →**](https://krishisetu-phi.vercel.app)
+
+[Report Bug](https://github.com/Shradda23623/krishisetu/issues) · [Request Feature](https://github.com/Shradda23623/krishisetu/issues)
 
 </div>
 
@@ -27,6 +29,24 @@
 The app supports **two user roles** with separate dashboards (Farmer and Customer), real-time **Stripe-powered checkout**, **Google Maps**-based nearby-farmer discovery, and a **multi-language UI** so it's accessible across India.
 
 > Built as a final-year student project to demonstrate full-stack web development with modern tools and real backend integrations.
+
+---
+
+## Try It Out
+
+👉 **Live site:** [https://krishisetu-phi.vercel.app](https://krishisetu-phi.vercel.app)
+
+1. Open the live site and click **Sign Up** (choose *Customer* or *Farmer*)
+2. Confirm your email (a confirmation email is sent immediately — banner shows you this)
+3. Browse the shop, add products to your cart, and check out with Stripe test mode
+
+**Stripe test card** (for the checkout page):
+```
+Card number : 4242 4242 4242 4242
+Expiry      : any future date (e.g. 12/34)
+CVC         : any 3 digits (e.g. 123)
+ZIP         : any 5 digits (e.g. 12345)
+```
 
 ---
 
