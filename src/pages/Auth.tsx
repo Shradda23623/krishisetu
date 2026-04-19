@@ -35,20 +35,33 @@ export default function Auth() {
     }
   };
 
+  const [confirmationSentTo, setConfirmationSentTo] = useState<string | null>(null);
+
   const handleSignup = async () => {
     if (!name || !email || !password) {
       toast({ title: "Missing fields", description: "Please fill all required fields.", variant: "destructive" });
       return;
     }
     setLoading(true);
-    const { error } = await signUp(email, password, name, phone, role);
+    const { error, needsEmailConfirmation } = await signUp(email, password, name, phone, role);
     setLoading(false);
     if (error) {
       toast({ title: "Signup failed", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Account created!", description: "You are now logged in." });
-      navigate(role === "farmer" ? "/farmer/dashboard" : "/");
+      return;
     }
+    if (needsEmailConfirmation) {
+      // Supabase has dispatched a confirmation email — surface that clearly.
+      setConfirmationSentTo(email);
+      toast({
+        title: "Confirmation email sent",
+        description: `We've sent a confirmation link to ${email}. Please check your inbox (and spam folder) to verify your account before logging in.`,
+        duration: 8000,
+      });
+      // Keep the user on the auth page so they can read the banner.
+      return;
+    }
+    toast({ title: "Account created!", description: "You are now logged in." });
+    navigate(role === "farmer" ? "/farmer/dashboard" : "/");
   };
 
   return (
@@ -119,6 +132,30 @@ export default function Auth() {
             </TabsContent>
 
             <TabsContent value="signup" className="mt-6 space-y-4">
+              {confirmationSentTo && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm"
+                >
+                  <div className="flex items-start gap-3">
+                    <Mail className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                    <div className="space-y-1">
+                      <p className="font-display font-semibold text-foreground">
+                        Confirmation email sent
+                      </p>
+                      <p className="text-muted-foreground">
+                        We sent a confirmation link to{" "}
+                        <span className="font-medium text-foreground">{confirmationSentTo}</span>.
+                        Open it to verify your email and finish creating your account.
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Didn't get it? Check your spam folder, or try signing up again in a minute.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div>
                 <Label className="font-medium text-muted-foreground">{t("auth_name")}</Label>
                 <div className="relative mt-1.5">

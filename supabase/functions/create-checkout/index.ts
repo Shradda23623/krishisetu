@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
 
     const origin = returnUrl
       ? new URL(returnUrl).origin
-      : req.headers.get("origin") || "https://id-preview--d06efe4b-52e5-47af-b72c-9dcef837987e.lovable.app";
+      : req.headers.get("origin") || "http://localhost:8080";
 
     // Build line items from order items
     const lineItems = (items || []).map((item: any) => ({

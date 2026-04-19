@@ -4,12 +4,18 @@ import type { User, Session } from "@supabase/supabase-js";
 
 type AppRole = "farmer" | "customer";
 
+interface SignUpResult {
+  error: Error | null;
+  /** true when Supabase has sent a confirmation email and the user is not yet signed in */
+  needsEmailConfirmation: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: AppRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, name: string, phone: string, role: AppRole) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, name: string, phone: string, role: AppRole) => Promise<SignUpResult>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -61,14 +67,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, name: string, phone: string, selectedRole: AppRole) => {
-    const { error } = await supabase.auth.signUp({
+    const emailRedirectTo = `${window.location.origin}/`;
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { display_name: name, phone, role: selectedRole },
+        emailRedirectTo,
       },
     });
-    return { error: error as Error | null };
+    // When Supabase email confirmation is enabled, signUp returns a user
+    // but no session — that's our signal that a confirmation email was sent.
+    const needsEmailConfirmation = !error && !!data?.user && !data?.session;
+    return { error: error as Error | null, needsEmailConfirmation };
   };
 
   const signIn = async (email: string, password: string) => {
