@@ -44,21 +44,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Use setTimeout to avoid Supabase client deadlock
-          setTimeout(() => fetchRole(session.user.id), 0);
+          // Use setTimeout to avoid Supabase client deadlock, but wait for role before clearing loading
+          setTimeout(async () => {
+            await fetchRole(session.user.id);
+            setLoading(false);
+          }, 0);
         } else {
           setRole(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
     // THEN check existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchRole(session.user.id);
+        await fetchRole(session.user.id);
       }
       setLoading(false);
     });
@@ -76,10 +79,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         emailRedirectTo,
       },
     });
-    // When Supabase email confirmation is enabled, signUp returns a user
-    // but no session — that's our signal that a confirmation email was sent.
-    const needsEmailConfirmation = !error && !!data?.user && !data?.session;
-    return { error: error as Error | null, needsEmailConfirmation };
+
+    if (error) return { error: error as Error | null, needsEmailConfirmation: false };
+
+    // If the email is already confirmed (autoconfirm ON) but Supabase didn't
+    // return a session, sign in immediately so the user is logged in right away.
+    if (data?.user?.email_confirmed_at && !data?.session) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      return { error: signInError as Error | null, needsEmailConfirmation: false };
+    }
+
+    // If no session and no email_confirmed_at, a confirmation email was sent.
+    const needsEmailConfirmation = !!data?.user && !data?.session;
+    return { error: null, needsEmailConfirmation };
   };
 
   const signIn = async (email: string, password: string) => {
