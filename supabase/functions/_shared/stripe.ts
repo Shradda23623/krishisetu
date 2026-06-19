@@ -4,9 +4,9 @@ export type StripeEnv = 'sandbox' | 'live';
 
 export function getConnectionApiKey(env: StripeEnv): string {
   const key = env === 'sandbox'
-    ? Deno.env.get('STRIPE_SANDBOX_API_KEY')
-    : Deno.env.get('STRIPE_LIVE_API_KEY');
-  if (!key) throw new Error(`STRIPE_${env.toUpperCase()}_API_KEY is not configured`);
+    ? (Deno.env.get('STRIPE_SANDBOX_API_KEY') || Deno.env.get('STRIPE_SECRET_KEY'))
+    : (Deno.env.get('STRIPE_LIVE_API_KEY') || Deno.env.get('STRIPE_SECRET_KEY'));
+  if (!key) throw new Error(`Stripe secret key is not configured. Set STRIPE_SECRET_KEY in Supabase secrets.`);
   return key;
 }
 

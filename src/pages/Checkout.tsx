@@ -1,4 +1,5 @@
 import { useSearchParams, Link } from "react-router-dom";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
@@ -6,6 +7,7 @@ import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import SmartNavbar from "@/components/SmartNavbar";
 
 export default function Checkout() {
+  usePageTitle("Checkout");
   const [searchParams] = useSearchParams();
   const orderIdsParam = searchParams.get("orders");
   const orderIds = orderIdsParam ? orderIdsParam.split(",") : [];

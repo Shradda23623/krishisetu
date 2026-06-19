@@ -45,20 +45,30 @@ function toProduct(p: ProductWithFarmer): Product {
 export function useDbProducts(category?: string) {
   return useQuery({
     queryKey: ["db-products", category],
+    // Product listings are stable — 5 min stale time prevents hammering Supabase
+    // on every navigation. (Also set globally in QueryClient but explicit here for clarity.)
+    staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      let query = supabase
+      // Fetch products + farmer profiles in parallel for speed
+      const productsPromise = supabase
         .from("products")
         .select("*")
         .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .then(r => { if (r.error) throw r.error; return r.data ?? []; });
 
-      if (category) query = query.eq("category", category);
+      // We need farmer IDs first, so get products first, then fire profiles in parallel
+      const products = await productsPromise;
+      if (!products.length) return [] as Product[];
 
-      const { data: products, error } = await query;
-      if (error) throw error;
-      if (!products?.length) return [] as Product[];
+      if (category) {
+        const filtered = products.filter(p => p.category === category);
+        if (!filtered.length) return [] as Product[];
+      }
 
-      const farmerIds = [...new Set(products.map(p => p.farmer_id))];
+      const displayProducts = category ? products.filter(p => p.category === category) : products;
+
+      const farmerIds = [...new Set(displayProducts.map(p => p.farmer_id))];
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, display_name, address")
@@ -66,7 +76,7 @@ export function useDbProducts(category?: string) {
 
       const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
 
-      return products.map(p => {
+      return displayProducts.map(p => {
         const profile = profileMap.get(p.farmer_id);
         return toProduct({
           ...p,

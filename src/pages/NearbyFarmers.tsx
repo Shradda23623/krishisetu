@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { MapPin, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SmartNavbar from "@/components/SmartNavbar";
@@ -9,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function NearbyFarmers() {
+  usePageTitle("Nearby Farmers");
   const { user } = useAuth();
   const { apiKey, loading: keyLoading } = useGoogleMapsKey();
   const [lat, setLat] = useState<number | null>(null);

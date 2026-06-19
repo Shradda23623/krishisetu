@@ -1,9 +1,11 @@
 import SmartNavbar from "@/components/SmartNavbar";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import Footer from "@/components/Footer";
 import { useI18n } from "@/context/I18nContext";
 import { Users, Target, Heart, Award, Leaf, TrendingUp, MapPin, ShieldCheck } from "lucide-react";
 
 export default function About() {
+  usePageTitle("About KrishiSetu");
   const { t } = useI18n();
 
   const values = [

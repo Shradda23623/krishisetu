@@ -13,11 +13,13 @@ import { useToast } from "@/hooks/use-toast";
 import { isOrderable } from "@/lib/productUtils";
 import { supabase } from "@/integrations/supabase/client";
 import SmartNavbar from "@/components/SmartNavbar";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import Footer from "@/components/Footer";
 import EmptyState from "@/components/EmptyState";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
 export default function Cart() {
+  usePageTitle("Your Cart");
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const { t, language } = useI18n();
   const { user, role } = useAuth();

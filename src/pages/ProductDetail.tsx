@@ -12,6 +12,7 @@ import SmartNavbar from "@/components/SmartNavbar";
 import Footer from "@/components/Footer";
 import ProductReviews from "@/components/ProductReviews";
 import { useState, useMemo } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -26,6 +27,7 @@ export default function ProductDetail() {
   }, [dbProducts, id]);
 
   const tp = useTranslatedProduct(product);
+  usePageTitle(tp?.translatedName);
 
   if (!product || !tp) {
     return (

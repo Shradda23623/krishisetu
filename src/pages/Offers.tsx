@@ -1,4 +1,5 @@
 import SmartNavbar from "@/components/SmartNavbar";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import Footer from "@/components/Footer";
 import { useI18n } from "@/context/I18nContext";
 import { motion } from "framer-motion";
@@ -64,6 +65,7 @@ const offers = [
 ];
 
 export default function Offers() {
+  usePageTitle("Offers & Deals");
   const { t } = useI18n();
 
   return (

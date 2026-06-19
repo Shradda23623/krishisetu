@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link } from "react-router-dom";
 import { Package, MapPin, User, ShoppingBag, Clock, CheckCircle2, Truck, Star, XCircle, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const statusConfig: Record<string, { icon: typeof Clock; color: string; label: s
 };
 
 export default function CustomerDashboard() {
+  usePageTitle("My Orders");
   const { user } = useAuth();
   const { toast } = useToast();
   const { apiKey } = useGoogleMapsKey();

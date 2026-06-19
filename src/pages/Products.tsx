@@ -15,11 +15,13 @@ import EmptyState from "@/components/EmptyState";
 import { ProductCardSkeletonGrid } from "@/components/skeletons/ProductCardSkeleton";
 import { useI18n } from "@/context/I18nContext";
 import { useDbProducts } from "@/hooks/useDbProducts";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import productsBg from "@/assets/products-bg.jpg";
 
 type SortKey = "newest" | "price_asc" | "price_desc" | "rating";
 
 export default function Products() {
+  usePageTitle("Shop Fresh Produce");
   const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
@@ -37,10 +39,8 @@ export default function Products() {
     pickles: t("cat_pickles"), jaggery: t("cat_jaggery"), oils: t("cat_oils"),
   };
 
-  const allProducts = useMemo(() => dbProducts, [dbProducts]);
-
   const filtered = useMemo(() => {
-    let list = allProducts;
+    let list = dbProducts;
 
     if (search) {
       const q = search.toLowerCase();
@@ -63,7 +63,7 @@ export default function Products() {
     else if (sort === "price_desc") sorted.sort((a, b) => b.price - a.price);
     else if (sort === "rating") sorted.sort((a, b) => b.rating - a.rating);
     return sorted;
-  }, [allProducts, search, minPrice, maxPrice, organicOnly, sort]);
+  }, [dbProducts, search, minPrice, maxPrice, organicOnly, sort]);
 
   const setCategory = (cat: Category | null) => {
     if (cat) setSearchParams({ category: cat });

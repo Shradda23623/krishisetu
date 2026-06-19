@@ -9,8 +9,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useI18n } from "@/context/I18nContext";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function Auth() {
+  usePageTitle("Sign In");
   const [role, setRole] = useState<"customer" | "farmer">("customer");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

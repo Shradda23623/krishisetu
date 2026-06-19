@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, MapPin, Package, Clock, CheckCircle2, Truck, XCircle, ChefHat } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +27,7 @@ const statusIcons = {
 } as const;
 
 export default function OrderDetail() {
+  usePageTitle("Order Details");
   const { id } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();

@@ -18,4 +18,22 @@ export default defineConfig(() => ({
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
+  build: {
+    // Warn if any chunk exceeds 600kb
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React runtime — cached separately for long-term
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          // Data fetching — rarely changes
+          "vendor-query": ["@tanstack/react-query", "@tanstack/query-core"],
+          // Supabase client
+          "vendor-supabase": ["@supabase/supabase-js"],
+          // Stripe — large but only loaded on checkout
+          "vendor-stripe": ["@stripe/react-stripe-js", "@stripe/stripe-js"],
+        },
+      },
+    },
+  },
 }));

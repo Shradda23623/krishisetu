@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Package, Plus, BarChart3, ShoppingBag, AlertTriangle, TrendingUp, IndianRupee, Wheat, MapPin, Star, Upload, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function FarmerDashboard() {
+  usePageTitle("Farmer Dashboard");
   const { t } = useI18n();
   const { user } = useAuth();
   const { toast } = useToast();

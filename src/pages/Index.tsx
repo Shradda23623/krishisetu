@@ -8,10 +8,12 @@ import Footer from "@/components/Footer";
 import { useI18n } from "@/context/I18nContext";
 import { useDbProducts } from "@/hooks/useDbProducts";
 import { ProductCardSkeletonGrid } from "@/components/skeletons/ProductCardSkeleton";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import heroBg from "@/assets/hero-bg.jpg";
 import ctaBg from "@/assets/cta-bg.jpg";
 
 export default function Index() {
+  usePageTitle(); // base title
   const { t } = useI18n();
   const { data: dbProducts = [], isLoading: productsLoading } = useDbProducts();
   const featured = dbProducts.slice(0, 8);
@@ -63,6 +65,7 @@ export default function Index() {
             muted
             loop
             playsInline
+            preload="none"
             poster={heroBg}
             className="h-full w-full object-cover"
             style={{ opacity: 0.8 }}

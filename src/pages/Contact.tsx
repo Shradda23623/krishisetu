@@ -1,4 +1,5 @@
 import SmartNavbar from "@/components/SmartNavbar";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import Footer from "@/components/Footer";
 import { useI18n } from "@/context/I18nContext";
 import { motion } from "framer-motion";
@@ -10,6 +11,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Contact() {
+  usePageTitle("Contact Us");
   const { t } = useI18n();
   const [sending, setSending] = useState(false);
 
