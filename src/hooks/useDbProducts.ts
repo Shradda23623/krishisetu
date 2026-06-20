@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Product } from "@/data/products";
+import { dummyProducts } from "@/data/products";
 
 export interface DbProduct {
   id: string;
@@ -60,7 +61,14 @@ export function useDbProducts(category?: string) {
 
       const { data: products, error } = await query;
       if (error) throw error;
-      if (!products?.length) return [] as Product[];
+      if (!products?.length) {
+        // No products in DB yet — show category-filtered dummy data so the site
+        // looks populated during development / demo.
+        const fallback = category
+          ? dummyProducts.filter(p => p.category === category)
+          : dummyProducts;
+        return fallback;
+      }
 
       const farmerIds = [...new Set(products.map(p => p.farmer_id))];
       const productIds = products.map(p => p.id);
