@@ -20,6 +20,8 @@ export interface DbProduct {
 interface ProductWithFarmer extends DbProduct {
   farmer_name: string | null;
   farmer_location: string | null;
+  avg_rating: number;
+  review_count: number;
 }
 
 function toProduct(p: ProductWithFarmer): Product {
@@ -36,8 +38,8 @@ function toProduct(p: ProductWithFarmer): Product {
     farmerName: p.farmer_name || "Farmer",
     location: p.farmer_location || "",
     state: "",
-    rating: 0,
-    reviews: 0,
+    rating: p.avg_rating,
+    reviews: p.review_count,
     organic: false,
   };
 }
@@ -45,44 +47,100 @@ function toProduct(p: ProductWithFarmer): Product {
 export function useDbProducts(category?: string) {
   return useQuery({
     queryKey: ["db-products", category],
-    // Product listings are stable — 5 min stale time prevents hammering Supabase
-    // on every navigation. (Also set globally in QueryClient but explicit here for clarity.)
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      // Fetch products + farmer profiles in parallel for speed
-      const productsPromise = supabase
+      // Filter by category at DB level to reduce data transfer
+      let query = supabase
         .from("products")
         .select("*")
         .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .then(r => { if (r.error) throw r.error; return r.data ?? []; });
+        .order("created_at", { ascending: false });
 
-      // We need farmer IDs first, so get products first, then fire profiles in parallel
-      const products = await productsPromise;
-      if (!products.length) return [] as Product[];
+      if (category) query = query.eq("category", category);
 
-      if (category) {
-        const filtered = products.filter(p => p.category === category);
-        if (!filtered.length) return [] as Product[];
+      const { data: products, error } = await query;
+      if (error) throw error;
+      if (!products?.length) return [] as Product[];
+
+      const farmerIds = [...new Set(products.map(p => p.farmer_id))];
+      const productIds = products.map(p => p.id);
+
+      // Fetch profiles AND ratings in parallel — one round trip instead of two sequential
+      const [profilesResult, ratingsResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("user_id, display_name, address")
+          .in("user_id", farmerIds),
+        supabase
+          .from("reviews")
+          .select("product_id, rating")
+          .in("product_id", productIds),
+      ]);
+
+      const profileMap = new Map(profilesResult.data?.map(p => [p.user_id, p]) ?? []);
+
+      // Compute avg rating and review count per product
+      const ratingMap = new Map<string, { sum: number; count: number }>();
+      for (const r of ratingsResult.data ?? []) {
+        const prev = ratingMap.get(r.product_id) ?? { sum: 0, count: 0 };
+        ratingMap.set(r.product_id, { sum: prev.sum + r.rating, count: prev.count + 1 });
       }
 
-      const displayProducts = category ? products.filter(p => p.category === category) : products;
-
-      const farmerIds = [...new Set(displayProducts.map(p => p.farmer_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("user_id, display_name, address")
-        .in("user_id", farmerIds);
-
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
-
-      return displayProducts.map(p => {
+      return products.map(p => {
         const profile = profileMap.get(p.farmer_id);
+        const ratingData = ratingMap.get(p.id);
+        const avg_rating = ratingData
+          ? Math.round((ratingData.sum / ratingData.count) * 10) / 10
+          : 0;
         return toProduct({
           ...p,
-          farmer_name: profile?.display_name || null,
-          farmer_location: profile?.address || null,
+          farmer_name: profile?.display_name ?? null,
+          farmer_location: profile?.address ?? null,
+          avg_rating,
+          review_count: ratingData?.count ?? 0,
         });
+      });
+    },
+  });
+}
+
+export function useProductById(id: string | undefined) {
+  return useQuery({
+    queryKey: ["product", id],
+    staleTime: 5 * 60 * 1000,
+    enabled: !!id,
+    queryFn: async () => {
+      const { data: p, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", id!)
+        .single();
+      if (error) throw error;
+
+      const [profileResult, ratingsResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("user_id, display_name, address")
+          .eq("user_id", p.farmer_id)
+          .single(),
+        supabase
+          .from("reviews")
+          .select("rating")
+          .eq("product_id", p.id),
+      ]);
+
+      const profile = profileResult.data;
+      const ratings = ratingsResult.data ?? [];
+      const avg_rating = ratings.length
+        ? Math.round((ratings.reduce((s, r) => s + r.rating, 0) / ratings.length) * 10) / 10
+        : 0;
+
+      return toProduct({
+        ...p,
+        farmer_name: profile?.display_name ?? null,
+        farmer_location: profile?.address ?? null,
+        avg_rating,
+        review_count: ratings.length,
       });
     },
   });

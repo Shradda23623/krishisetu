@@ -23,6 +23,10 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
             alt={tp.translatedName}
             className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
             loading="lazy"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src =
+                "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&q=60";
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
           {product.organic && (
@@ -48,10 +52,13 @@ export default function ProductCard({ product, index = 0 }: { product: Product; 
             <MapPin className="h-3 w-3 text-primary/70" />
             <span className="truncate">{tp.translatedLocation}</span>
           </div>
-          <div className="flex items-center gap-1 text-xs">
-            <Star className="h-3 w-3 fill-secondary text-secondary" />
-            <span className="font-semibold text-secondary">{product.rating}</span>
-          </div>
+          {product.rating > 0 && (
+            <div className="flex items-center gap-1 text-xs">
+              <Star className="h-3 w-3 fill-secondary text-secondary" />
+              <span className="font-semibold text-secondary">{product.rating}</span>
+              <span className="text-muted-foreground/60">({product.reviews})</span>
+            </div>
+          )}
         </div>
         <div className="mt-3 flex items-center justify-between">
           <div>

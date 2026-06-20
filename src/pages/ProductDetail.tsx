@@ -2,16 +2,15 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Star, MapPin, ShoppingCart, Minus, Plus, Leaf, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { Product } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { useI18n } from "@/context/I18nContext";
 import { useTranslatedProduct } from "@/hooks/useTranslatedProduct";
-import { useDbProducts } from "@/hooks/useDbProducts";
+import { useProductById } from "@/hooks/useDbProducts";
 import { isOrderable } from "@/lib/productUtils";
 import SmartNavbar from "@/components/SmartNavbar";
 import Footer from "@/components/Footer";
 import ProductReviews from "@/components/ProductReviews";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function ProductDetail() {
@@ -20,11 +19,7 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
 
-  const { data: dbProducts = [] } = useDbProducts();
-
-  const product: Product | undefined = useMemo(() => {
-    return dbProducts.find(p => p.id === id);
-  }, [dbProducts, id]);
+  const { data: product } = useProductById(id);
 
   const tp = useTranslatedProduct(product);
   usePageTitle(tp?.translatedName);
@@ -57,7 +52,16 @@ export default function ProductDetail() {
 
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
           <div className="overflow-hidden rounded-2xl glass-card">
-            <img src={product.images[0]} alt={tp.translatedName} className="h-full w-full object-cover" style={{ maxHeight: 500 }} />
+            <img
+              src={product.images[0]}
+              alt={tp.translatedName}
+              className="h-full w-full object-cover"
+              style={{ maxHeight: 500 }}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src =
+                  "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&q=60";
+              }}
+            />
           </div>
 
           <div className="flex flex-col">

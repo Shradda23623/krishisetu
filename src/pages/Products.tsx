@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, Sparkles, X, PackageOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ export default function Products() {
   const { t } = useI18n();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 250);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [organicOnly, setOrganicOnly] = useState(false);
@@ -42,8 +44,8 @@ export default function Products() {
   const filtered = useMemo(() => {
     let list = dbProducts;
 
-    if (search) {
-      const q = search.toLowerCase();
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
       list = list.filter(p =>
         p.name.toLowerCase().includes(q) ||
         p.location.toLowerCase().includes(q) ||
@@ -63,7 +65,7 @@ export default function Products() {
     else if (sort === "price_desc") sorted.sort((a, b) => b.price - a.price);
     else if (sort === "rating") sorted.sort((a, b) => b.rating - a.rating);
     return sorted;
-  }, [dbProducts, search, minPrice, maxPrice, organicOnly, sort]);
+  }, [dbProducts, debouncedSearch, minPrice, maxPrice, organicOnly, sort]);
 
   const setCategory = (cat: Category | null) => {
     if (cat) setSearchParams({ category: cat });
